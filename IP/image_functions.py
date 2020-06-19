@@ -31,8 +31,9 @@ def see_img( img, frame_name= 'frame', is_directory = False):
 class_confidence_thresh = 0.5 							# confidence chosen above which we classify
 nms_thresh_val = 0.4									# threshold value for non maxima supression
 required_classes= [ 2, 3, 5, 7] 						# classes chosen from yolo to classify
-other_classes= [ 0, 1, 9, 11, 12]						# classes that may be important
-classes_to_identify = [ 2, 3, 5, 7, 0, 1, 9, 11, 12]	# all the classes to be classified
+other_classes= [ 0, 1, 9]						# classes that may be important
+classes_to_identify = [ 2, 3, 5, 7, 0, 1, 9]	# all the classes to be classified
+# removed fire hydrant and stop sign from detections
 
 """
 intialising YOLO
@@ -110,7 +111,7 @@ def get_information( yolo_output, height, width):
 	else:
 		return 'no classes identified'
 	
-	ret_array = np.zeros( len( classes_to_identify))
+	ret_array = np.zeros( len( classes_to_identify), dtype= 'int')
 
 	for indx in indexes_to_keep:
 		detd_class = pred_classIDs[indx]
