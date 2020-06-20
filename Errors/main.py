@@ -22,21 +22,21 @@ time_db_dir = getcwd() + '//Traffic Program//timeData.db'
 
 
 
-vehicler = np.zeros( 7, dtype= 'int')
-timer = [8.7]
+vehicler = np.ones(7,dtype='int')
+timer = np.array([8.7])
 
 # trial code
-# creating a trial database
-createConnection( 'trial.db')
+# # creating a trial database
+# createConnection( 'trial.db')
 createTable( 'trial.db', 'first', 'time')
 # database created
-insertData( 'trial.db', 'first', timer, 'time')
-print( getAllData( 'trial.db', 'first'))
+insertData('trial.db','first',timer,'time')
+# print( getAllData( 'trial.db', 'first'))
 
 
 
 # createConnection( 'trial.db')
 createTable( 'trial.db', 'second', 'vehicle')
-# database created
+# # database created
 insertData( 'trial.db', 'second', vehicler, 'vehicle')
-print( getAllData( 'trial.db', 'second'))
+# print( getAllData( 'trial.db', 'second'))

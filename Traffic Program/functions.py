@@ -1,7 +1,6 @@
 import numpy as np 
 from time import sleep
 import threading
-import msvcrt
 import keyboard
 
 

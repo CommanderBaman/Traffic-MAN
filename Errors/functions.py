@@ -30,7 +30,7 @@ def createTable( db_dir, table_name, func):
         # thinking that latest data will be at the last so no other values
         if func == 'vehicle':
             create_table_sql = """CREATE TABLE IF NOT EXISTS {}(
-                id INTEGER PRIMARY KEY UNIQUE,  
+                id INTEGER PRIMARY KEY,  
                 car INTEGER,
                 motorcycle INTEGER,
                 bus INTEGER,
@@ -40,7 +40,7 @@ def createTable( db_dir, table_name, func):
                 traffic_light INTEGER);""".format( table_name)
 
         elif func == 'time':
-            create_table_sql = 'CREATE TABLE IF NOT EXISTS {}( id INTEGER PRIMARY KEY UNIQUE, time REAL);'.format( table_name)
+            create_table_sql = 'CREATE TABLE IF NOT EXISTS '+table_name+'( id INTEGER PRIMARY KEY, time REAL);'
 
         # creating table
         conn.execute(create_table_sql)
@@ -62,7 +62,7 @@ def createTable( db_dir, table_name, func):
         return ['id', 'time']
 
 
-def insertData( db_dir, table_name, data, func):
+def insertData(db_dir,table_name,data,func):
     """
     Inserts data into the data table\n
     db_dir contains the directory of the database\n
@@ -75,30 +75,34 @@ def insertData( db_dir, table_name, data, func):
     conn = createConnection( db_dir)
     cur = conn.cursor()
 
-    info_dict = {}
+    # info_dict = {}
 
     if func == 'vehicle':
         # creating SQL statement
-        sql_statement = ''' INSERT INTO {} ( car, motorcycle, bus, truck, person, bicycle, traffic_light)
-                VALUES( :car, :motorcycle, :bus, :truck, :person, :bicycle, :traffic_light) '''.format( table_name)
+        sql_statement =  'INSERT INTO second( car, motorcycle, bus, truck, person, bicycle, traffic_light) VALUES(?,?,?,?,?,?,?) '
         # preparing for the data
-        col_names = [ 'car', 'motorcycle', 'bus', 'truck', 'person', 'bicycle', 'traffic_light']
+      
 
 
-    elif func == 'time':
-        # creating SQL statement
-        sql_statement = ''' INSERT INTO {} ( time)
-                VALUES(:time) '''.format( table_name)
-        col_names = [ 'time']
-
+    elif func=='time':
+    # creating SQL statement
+        sql_statement = '''INSERT INTO first(time) 
+                                    VALUES(?)'''
     
-    for col, val in zip( col_names, data):
-        info_dict.update( { col: val})
 
+  
     # storing data
-    cur.execute(sql_statement, info_dict)
+    data= data.tolist()
+    cur.execute(sql_statement,data)
+    
     print( 'data stored')
-
+    cur.execute('select * from '+table_name)
+    conn.commit()
+    a=0
+    while a!=None:
+        a=cur.fetchone()
+        print(a)
+    
     # closing connection
     conn.close()
 
