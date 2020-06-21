@@ -1,17 +1,17 @@
 import numpy as np
 from time import perf_counter
 from os import getcwd
-import sqlite3 as sql 
+from sqlite3 import connect, Error
 # modules imported
 
 # Write your code below
 def createConnection( db_file):
-    """ create a database connection to a SQLite database """
+    """ create a database connection to a SQLite database and returns it    """
     conn = None
     try:
-        conn = sql.connect( db_file)
+        conn = connect( db_file)
         return conn
-    except sql.Error as e:
+    except Error as e:
         print(e)
 
     return conn
@@ -21,6 +21,7 @@ def createTable( db_dir, table_name, func):
     """ create a table in a database\n
     takes in the directory of the database and the name of the table to be created\n
     this table is specific to the current IP detection array\n
+    func decides what type of table you want to create - vehicles or time\n
     Returns the column names of the table as a list. 
     """
     try:
@@ -49,7 +50,7 @@ def createTable( db_dir, table_name, func):
         # closing connection
         conn.close()
 
-    except sql.Error as e:
+    except Error as e:
         print(e)
     
     # closing connection
@@ -62,14 +63,15 @@ def createTable( db_dir, table_name, func):
         return ['id', 'time']
 
 
-def insertData(db_dir,table_name,data,func):
+def insertData( db_dir, table_name, data,func):
     """
     Inserts data into the data table\n
     db_dir contains the directory of the database\n
     table name is the name of the table you want to store value in\n
     data is the data to be stored in the table \n
+    func decides what type of data you want to store - vehicles or time\n
     WARNING:\n
-    data should be an array of dimension (1,7)\n
+    data should be an array of dimension (7,) for vehicles and (1,) for time\n
     """
     # creating connection
     conn = createConnection( db_dir)
@@ -79,57 +81,92 @@ def insertData(db_dir,table_name,data,func):
 
     if func == 'vehicle':
         # creating SQL statement
-        sql_statement =  'INSERT INTO second( car, motorcycle, bus, truck, person, bicycle, traffic_light) VALUES(?,?,?,?,?,?,?) '
+        sql_statement =  'INSERT INTO {}( car, motorcycle, bus, truck, person, bicycle, traffic_light) VALUES(?,?,?,?,?,?,?) '.format( table_name)
         # preparing for the data
       
 
 
     elif func=='time':
     # creating SQL statement
-        sql_statement = '''INSERT INTO first(time) 
-                                    VALUES(?)'''
+        sql_statement = '''INSERT INTO {}(time) VALUES(?)'''.format( table_name)
     
-
   
     # storing data
     data= data.tolist()
     cur.execute(sql_statement,data)
     
-    print( 'data stored')
-    cur.execute('select * from '+table_name)
     conn.commit()
-    a=0
-    while a!=None:
-        a=cur.fetchone()
-        print(a)
-    
+
     # closing connection
     conn.close()
 
-    return None
+    return 'data stored'
 
 def getAllData( db_dir, table_name):
+    """
+    Gets all the data from the table in the database\n
+    db_dir contains the directory of the database\n
+    table name is the name of the table you want to get values from\n
+    prints all the values one by one\n
+    returns the list of the data with each element as the data\n
+    """
     # creating connection
     conn = createConnection( db_dir)
-
-    # getting all data
-    conn.execute('select * from {} LIMIT 1'.format( table_name))
     cur = conn.cursor()
 
-    b = 0
+    # getting all data
+    cur.execute('SELECT * FROM {}'.format( table_name))
 
-    while b!=None:
-        b = cur.fetchone()
+    data_point = 0
+    ret_data = []
 
-        if b != None:
-            return b 
+    # looping over the data
+    while data_point != None:
+
+        # taking one point out
+        data_point = cur.fetchone()
+
+        # adding value to return list if data is present
+        if data_point != None:
+            ret_data.append( data_point[1:])
         else:
-            print( 'no data left')
             break 
     
     #closing connection
     conn.close()
 
-    return None
+    return ret_data
+
+def getLastPoint( db_dir, table_name):
+    """
+    db_dir contains the directory of the database\n
+    table name is the name of the table you want to get value from\n
+    returns the last point of the data from the database\n
+    """
+    # creating connection
+    conn = createConnection( db_dir)
+    cur = conn.cursor()
+
+    # getting all data
+    cur.execute('''SELECT * FROM {0} WHERE id = ( SELECT MAX(id) FROM {0})'''.format( table_name))
+    # sql_statement = '''SELECT * FROM {}  
+    #                 ORDER BY column_name DESC  
+    #                 LIMIT 1;  '''.format( )
+
+    data_point = 0
+
+    data_point = cur.fetchone()  
+    
+    #closing connection
+    conn.close()
+
+    if data_point != None:
+        return data_point[1:]
+
+    else:
+        return 'no data present'
+        
+    
+
 
 
