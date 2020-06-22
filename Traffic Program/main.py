@@ -51,9 +51,9 @@ while( 1):
     while( not emergency):
 
         # breaking loop if letter q is pressed and held
-        if loop_exiter( 'q', DEBUG):
-            exit_program = True
-            break
+        # if loop_exiter( 'q', DEBUG):
+        #     exit_program = True
+        #     break
 
         if DEBUG:
             print( 'times are: ', traffic_time)
@@ -74,11 +74,11 @@ while( 1):
 
         # checking for emergency vehicles while showing lights
         # for now pressing e causes emergency
-        if emergency_updater( chosen_traffic_light.green_time, 'e'):
-            emergency = True 
-            del light_thread
-            print( 'light thread deactivated:', not light_thread.is_alive())
-            break
+        # if emergency_updater( chosen_traffic_light.green_time, 'e'):
+        #     emergency = True 
+        #     del light_thread
+        #     print( 'light thread deactivated:', not light_thread.is_alive())
+        #     break
 
         """
         here we need to change for real values
