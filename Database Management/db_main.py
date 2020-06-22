@@ -3,7 +3,7 @@ from os import getcwd
 from time import sleep
 # modules imported
 
-from functions import getAllData, insertData, createConnection, createTable, getLastPoint
+from db_functions import getAllData, insertData, createConnection, createTable, getLastPoint
 """
 This contains all the code for creating the table and must only be run once
 """

@@ -1,7 +1,13 @@
 import numpy as np  
 from cv2 import cv2 
 from os import getcwd
+from sys import path 
+from skimage import io
 # modules imported
+
+# database management functions
+path.append( getcwd() + '\\Database Management')
+from db_functions import insertData, createTable
 
 """
 initialising basic variables and functions
@@ -143,28 +149,27 @@ def apply_yolo( image):
 	return yolo_output 
 
 
-def detect_class_in_img( image, camera_id):
+def detect_class_in_img( image, camera_id, is_url= False, is_directory= False):
 	"""
 	INPUT:\n
 	takes the image in which the objects need to be detected\n
+	camera id contains the id for the camera\n
+	if the image variable is a url or a directory pass true in the respective variables\n
 	OUTPUT:\n
 	the array containing the counts of the objects detected\n
-
-	UPDATES TO ADD:\n
-	This will directly add the information into the database. so waiting for the database part to complete their job here.
 	"""
+	if is_url:
+		image = io.imread( image)
+		image = cv2.cvtColor( image, cv2.COLOR_RGB2BGR)
+	elif is_directory:
+		image = cv2.imread( image, 1)
+		
+	information = get_information( apply_yolo( image), image.shape[0], image.shape[1])
 
-	return get_information( apply_yolo( image), image.shape[0], image.shape[1])
+	vehicle_db_dir = getcwd() + '//ML//vehicleData.db'
 
+	createTable( db_dir= vehicle_db_dir, table_name= camera_id, func= 'vehicle', if_id= True)
+	insertData( db_dir= vehicle_db_dir, table_name= camera_id, data= information, func= 'vehicle', if_id= True)
 
-
-
-
-
-
-	
-
-	
-	
-	
+	return information
 

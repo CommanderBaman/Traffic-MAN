@@ -6,45 +6,41 @@ traffic program.
 """
 import numpy as np 
 from time import sleep
+from os import getcwd
+from sys import path 
+
+# ML class from superclass of the traffic light
+path.append( getcwd() + '\\ML')
+from ml_classes import TrafficModel
+
+# getting database functions
+path.append( getcwd() + '\\Database Functions')
+from db_functions import getLastPoint
+
 
 #assining values to colors
 color_to_num = { 'red': 0, 'yellow':1, 'green': 2}
 num_to_color = { 0: 'red', 1: 'yellow', 2: 'green'}
 
-
-# class Intersection:
-#     """
-#     making a class to handle an intersection
-#     """
-
-#     def __init__( self, num_lights= 4):
-#         """
-#         Variables:\n
-#         \tnum_lights contains the number of lights in the intersection.
-#         """
-#         self.num_lights = num_lights 
-
-#     def __str__( self):
-#         return 'This is an intersection containing {} traffic lights'.format( self.num_lights)
-    
-#     def __repr__( self):
-#         return 'intersection object. Number of lights: {}'.format( self.num_lights)
+# directory for the vehicle and time database
+vehicle_db_dir = getcwd() + '\\ML\\vehicleData.db'
+vehicle_db_dir = getcwd() + '\\Traffic Program\\timeData.db'
 
 
-class Traffic_Light:
+class Traffic_Light( TrafficModel):
     """
     making a class for handling each light
     """
 
-    def __init__( self, tl_id, time_val, color= 'red', inactive= False):
+    def __init__( self, tl_id, color= 'red', inactive= False):
         """
-        Variables:\n\ttime_val consists the time allotted to the light\n
+        Variables:\n
         \tcolor represents the color that is allotted to each light.\n
         \tid is a unique value allotted to recognise the light.\n
         \tinactive is a variable that decides whether to change color of light to green or not.\n
         """
+        TrafficModel.__init__( self)
         self.id = tl_id
-        self.time_val = time_val 
         self.color = color 
         self.inactive = inactive
     
@@ -64,10 +60,27 @@ class Traffic_Light:
         """calculates the yellow time of the light""" 
         return max( self.time_val - self.yellow_time, 0)
 
+    @property
+    def objectsArray( self):
+        """
+        returns the latest objects array stored in the database
+        """
+        return getLastPoint( db_dir= vehicle_db_dir, table_name= self.id, if_id= True)
+    
+    @property
+    def time_val( self):
+        """time_val consists the time allotted to the light\n"""
+        return self.timeVal( self.objectsArray)
+
+
     # making functions for handling variables
     def assign_time( self, time):
-        """time is an integer"""
-        self.time_val = time 
+        """
+        This is deprecated\n
+        time is an integer
+        """
+        # self.time_val = time 
+        pass
     
     def change_color( self, color):
         """color is either a string or a number"""

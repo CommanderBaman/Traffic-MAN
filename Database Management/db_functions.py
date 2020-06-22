@@ -4,6 +4,8 @@ from os import getcwd
 from sqlite3 import connect, Error
 # modules imported
 
+id_to_table_name = { 0:'up', 1:'left', 2:'right', 3:'down'}
+
 # Write your code below
 def createConnection( db_file):
     """ create a database connection to a SQLite database and returns it    """
@@ -17,13 +19,16 @@ def createConnection( db_file):
     return conn
 
 
-def createTable( db_dir, table_name, func):
+def createTable( db_dir, table_name, func, if_id= False):
     """ create a table in a database\n
     takes in the directory of the database and the name of the table to be created\n
     this table is specific to the current IP detection array\n
     func decides what type of table you want to create - vehicles or time\n
     Returns the column names of the table as a list. 
     """
+    if if_id:
+        table_name = id_to_table_name[table_name]
+
     try:
         # creating connection
         conn = createConnection( db_dir)
@@ -46,6 +51,7 @@ def createTable( db_dir, table_name, func):
         # creating table
         conn.execute(create_table_sql)
         print("table created")
+        conn.commit()
 
         # closing connection
         conn.close()
@@ -63,7 +69,7 @@ def createTable( db_dir, table_name, func):
         return ['id', 'time']
 
 
-def insertData( db_dir, table_name, data,func):
+def insertData( db_dir, table_name, data, func, if_id= False):
     """
     Inserts data into the data table\n
     db_dir contains the directory of the database\n
@@ -73,6 +79,9 @@ def insertData( db_dir, table_name, data,func):
     WARNING:\n
     data should be an array of dimension (7,) for vehicles and (1,) for time\n
     """
+    if if_id:
+        table_name = id_to_table_name[table_name]
+
     # creating connection
     conn = createConnection( db_dir)
     cur = conn.cursor()
@@ -94,7 +103,6 @@ def insertData( db_dir, table_name, data,func):
     # storing data
     data= data.tolist()
     cur.execute(sql_statement,data)
-    
     conn.commit()
 
     # closing connection
@@ -102,7 +110,7 @@ def insertData( db_dir, table_name, data,func):
 
     return 'data stored'
 
-def getAllData( db_dir, table_name):
+def getAllData( db_dir, table_name, if_id= False):
     """
     Gets all the data from the table in the database\n
     db_dir contains the directory of the database\n
@@ -110,6 +118,9 @@ def getAllData( db_dir, table_name):
     prints all the values one by one\n
     returns the list of the data with each element as the data\n
     """
+    if if_id:
+        table_name = id_to_table_name[table_name]
+
     # creating connection
     conn = createConnection( db_dir)
     cur = conn.cursor()
@@ -137,12 +148,15 @@ def getAllData( db_dir, table_name):
 
     return ret_data
 
-def getLastPoint( db_dir, table_name):
+def getLastPoint( db_dir, table_name, if_id= False):
     """
     db_dir contains the directory of the database\n
     table name is the name of the table you want to get value from\n
     returns the last point of the data from the database\n
     """
+    if if_id:
+        table_name = id_to_table_name[table_name]
+
     # creating connection
     conn = createConnection( db_dir)
     cur = conn.cursor()
@@ -164,7 +178,8 @@ def getLastPoint( db_dir, table_name):
         return data_point[1:]
 
     else:
-        return 'no data present'
+        print( 'no data present')
+        return None
         
     
 
