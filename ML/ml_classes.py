@@ -1,5 +1,11 @@
 import numpy as np
+from os import getcwd
+from sys import path 
 # modules imported
+
+# getting database functions
+path.append( getcwd() + '\\Database Functions')
+from db_functions import getLastPoint
 
 # Write your code below
 
@@ -9,15 +15,13 @@ defining a class for traffic model
 
 class TrafficModel:
 
-    def __init__( self, id, lr= 0.01):
+    def __init__( self, lr= 0.001):
         """
         initialising class
         weight and bias contain the ML parameters for the Traffic light model
-        id is the ID of the Traffic Light
         """
         self.weight= np.ones( (9, 1)) # both these are already initialised using the pre trained model
         self.bias= 1
-        self.id = id 
         self.inTraining = True
         self.trainedOn = 0
         self.lr = lr
@@ -27,13 +31,17 @@ class TrafficModel:
     def isTraining( self):
         return self.trainedOn < self.trainLimit
 
+
     def __repr__(self):
-        return 'Traffic Model builder object: ID {} '.format( self.id)
+        return 'Traffic Model ML builder object'
     
     def timeVal( self, objectsArray):
         """
-        Returns the time of the light
+        Returns the red time of the light
         """
+        if objectsArray == None:
+            return 0
+            
         return float( np.matmul( objectsArray, self.weight) + self.bias)
     
     def train( self, objectsArray, timeArray, batchSize= 1):

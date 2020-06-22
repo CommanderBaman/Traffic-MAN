@@ -4,7 +4,12 @@ from time import perf_counter
 from os import getcwd
 import multiprocessing 
 
-from image_functions import detect_class_in_img
+from ip_functions import detect_class_in_img
+from sys import path 
+
+# database management functions
+path.append( getcwd() + '\\Database Management')
+from db_functions import getAllData
 
 img_dir = getcwd() + '\\IP\\sample images\\1.jpg'
 img_dir2 = getcwd() + '\\IP\\sample images\\2.jpg'
@@ -37,13 +42,18 @@ if __name__ == '__main__':
     # process3.join()
     # process4.join()
 
-    # this is direct (comes out to be faster -?)
-    print( detect_class_in_img( img, 1))
-    print( detect_class_in_img( img2, 1))
-    print( detect_class_in_img( img3, 1))
-    print( detect_class_in_img( img4, 1))
+    # this is direct (comes out to be faster - why?)
+    print( detect_class_in_img( img, 0), 0)
+    print( detect_class_in_img( img2, 1), 1)
+    print( detect_class_in_img( img3, 2), 2)
+    print( detect_class_in_img( img4, 3), 3)
 
+    vehicle_db_dir = getcwd() + '//ML//vehicleData.db'
 
+    print( getAllData( vehicle_db_dir, table_name= 0, if_id= True))
+    print( getAllData( vehicle_db_dir, table_name= 1, if_id= True))
+    print( getAllData( vehicle_db_dir, table_name= 2, if_id= True))
+    print( getAllData( vehicle_db_dir, table_name= 3, if_id= True))
     """
     although the multiprocessing is slower here, we need to check for the board too
     not giving more time in it 
