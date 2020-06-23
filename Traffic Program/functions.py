@@ -1,8 +1,13 @@
 import numpy as np 
-from time import sleep
+from time import sleep, perf_counter
 import threading
 import keyboard
+from sys import path 
+from os import getcwd
 
+# getting IP functions
+path.append( getcwd() + '\\IP')
+from ip_functions import detect_class_in_img
 
 def loop_exiter( key_stroke, wait):
     """returns True if key_stroke is pressed in the computer"""
@@ -32,9 +37,9 @@ def traffic_light_chooser( intersection):
 
 def all_inactive_converter( intersection, DEBUG= False, emergency= False):
     """
-    changes all the traffic lights to active if all are inactive
-    else remains the same
-    if the emergency condition is there then it is also reset
+    changes all the traffic lights to active if all are inactive\n
+    else remains the same\n
+    if the emergency condition is there then it is also reset\n
     """
     all_inactive = True
 
@@ -51,24 +56,55 @@ def all_inactive_converter( intersection, DEBUG= False, emergency= False):
     return 'some are active'
 
 
-def time_updater( intersection, time_values):
-    """updates the time for all the lights"""
+def time_updater( intersection, in_loop= False, chosen_id= 5, ip_time= False):
+    """
+    updates the time for all the lights by running the IP program\n
+    if its is in loop then sleeps for green time - 3 seconds\n
+    """
+
+    # checking if its in loop 
+    if in_loop:
+        # just final checking
+        if chosen_id > 3:
+            print( 'Provided ID is wrong')
+        else:
+            chosen_traffic_light = intersection[ chosen_id]
+            sleep_time = max( 0, chosen_traffic_light.green_time - 4)
+            sleep( sleep_time)
     
-    for index, tl in enumerate( intersection):
-        tl.assign_time( time_values[index])
-    
+    start = perf_counter()
+    # running IP for the intersection
+    for tl in intersection:
+        # idhar change kar tanmay
+        detect_class_in_img( tl.img_link, tl.id, is_url= True)
+    end = perf_counter()
+
+    if ip_time:
+        print( 'IP run in {} seconds'.format( np.round( end - start, 3)))
     return 'time updated'
 
 def emergency_updater( check_time, key_stroke):
 
-    for _ in range( 100):
+    for _ in range( 30):
         # detecting the emergency only when e is pressed
         if loop_exiter( key_stroke, False):
             return True
         
         # sleeping for the rest of the time
-        sleep( check_time/100)
+        sleep( check_time/30)
     
     return False
 
 
+def get_all_traffic_times( intersection):
+    """
+    gets all the traffic values from the intersection
+    """
+
+    ret_list= []
+
+    # getting all the values
+    for tl in intersection:
+        ret_list.append( tl.time_val)
+    
+    return ret_list

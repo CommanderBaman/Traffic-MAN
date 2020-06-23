@@ -14,8 +14,12 @@ path.append( getcwd() + '\\ML')
 from ml_classes import TrafficModel
 
 # getting database functions
-path.append( getcwd() + '\\Database Functions')
+path.append( getcwd() + '\\Database Management')
 from db_functions import getLastPoint
+
+# getting IP functions
+path.append( getcwd() + '\\IP')
+from ip_functions import detect_class_in_img
 
 
 #assining values to colors
@@ -24,7 +28,7 @@ num_to_color = { 0: 'red', 1: 'yellow', 2: 'green'}
 
 # directory for the vehicle and time database
 vehicle_db_dir = getcwd() + '\\ML\\vehicleData.db'
-vehicle_db_dir = getcwd() + '\\Traffic Program\\timeData.db'
+time_db_dir = getcwd() + '\\Traffic Program\\timeData.db'
 
 
 class Traffic_Light( TrafficModel):
@@ -32,7 +36,7 @@ class Traffic_Light( TrafficModel):
     making a class for handling each light
     """
 
-    def __init__( self, tl_id, color= 'red', inactive= False):
+    def __init__( self, tl_id, img_link, color= 'red', inactive= False):
         """
         Variables:\n
         \tcolor represents the color that is allotted to each light.\n
@@ -43,6 +47,7 @@ class Traffic_Light( TrafficModel):
         self.id = tl_id
         self.color = color 
         self.inactive = inactive
+        self.img_link = img_link
     
     def __str__( self):
         return 'This is a traffic light with color {} waiting for {} seconds'.format( self.color, self.time_val)
@@ -65,22 +70,12 @@ class Traffic_Light( TrafficModel):
         """
         returns the latest objects array stored in the database
         """
-        return getLastPoint( db_dir= vehicle_db_dir, table_name= self.id, if_id= True)
+        return np.array( getLastPoint( db_dir= vehicle_db_dir, table_name= self.id, if_id= True))
     
     @property
     def time_val( self):
         """time_val consists the time allotted to the light\n"""
         return self.timeVal( self.objectsArray)
-
-
-    # making functions for handling variables
-    def assign_time( self, time):
-        """
-        This is deprecated\n
-        time is an integer
-        """
-        # self.time_val = time 
-        pass
     
     def change_color( self, color):
         """color is either a string or a number"""
@@ -118,10 +113,31 @@ class Traffic_Light( TrafficModel):
         print( 'changing color of light {} to red'.format( self.id))
         self.change_color( 'red')
         self.inactive = True
-        self.assign_time( 0)
 
         return 'light {} handled'.format( self.id)     
-        
+    
+    def img_updater( self, img_link):
+        """
+        updates the image link stored in the class
+        """
+        # idhar change kar tanmay
+        self.img_link = img_link
+        return 'image updated'
+
+    def light_trainer( self, objectsAtStart):
+        """
+        It trains the light variables for each point
+        """
+        detect_class_in_img( self.img_link, self.id, is_url= True)
+        self.train_with_object( self.threshold_decider( objectsAtStart), self.time_val)
+        return None 
+    
+    def threshold_decider( self, objectsArray):
+        """
+        it gives a threshold for the current light
+        """
+        # write over 
+        return objectsArray / 10
     
 
 

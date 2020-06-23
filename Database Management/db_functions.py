@@ -50,7 +50,6 @@ def createTable( db_dir, table_name, func, if_id= False):
 
         # creating table
         conn.execute(create_table_sql)
-        print("table created")
         conn.commit()
 
         # closing connection
