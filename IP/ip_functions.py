@@ -7,7 +7,7 @@ from skimage import io
 
 # database management functions
 path.append( getcwd() + '\\Database Management')
-from db_functions import insertData, createTable
+from db_functions import insertData, createTable, getLastPoint
 
 """
 initialising basic variables and functions

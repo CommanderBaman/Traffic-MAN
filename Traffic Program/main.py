@@ -14,23 +14,22 @@ clean the intersections\n
 """
 import numpy as np 
 from classes import Traffic_Light
-from functions import loop_exiter, traffic_light_chooser, all_inactive_converter, time_updater, emergency_updater
+from functions import loop_exiter, traffic_light_chooser, all_inactive_converter, time_updater, emergency_updater, get_all_traffic_times
 from time import sleep
 import threading
+from sys import path 
+from os import getcwd
 
 # this variable sees if the project is on trial on or not
 DEBUG = True
 
-def nothing():
-    pass
+img_dir = getcwd() + '\\IP\\sample images\\1.jpg'
+img_dir2 = getcwd() + '\\IP\\sample images\\2.jpg'
+img_dir3 = getcwd() + '\\IP\\sample images\\3.jpg'
+img_dir4 = getcwd() + '\\IP\\sample images\\4.jpg'
 
 # traffic_time contains all the time values 
 # taking random values right now for testing
-if DEBUG:
-    traffic_time= np.random.randint( 10, size= 4)
-else:
-    traffic_time= np.random.randint( 100, size= 4)
-print( 'Initial times are: ', traffic_time)
 
 # emergency variable
 emergency = False
@@ -39,27 +38,29 @@ emergency_value = 5 # contains the id of the traffic at which emergecy comes
 # variable for exiting the full program
 exit_program = False
 
-light_1 = Traffic_Light( 0, traffic_time[0])
-light_2 = Traffic_Light( 1, traffic_time[1])
-light_3 = Traffic_Light( 2, traffic_time[2])
-light_4 = Traffic_Light( 3, traffic_time[3])
+# defining the traffic lights Here we have to add actual links to the images
+light_1 = Traffic_Light( 0, img_dir)
+light_2 = Traffic_Light( 1, img_dir2)
+light_3 = Traffic_Light( 2, img_dir3)
+light_4 = Traffic_Light( 3, img_dir4)
 
 intersection = [ light_1, light_2, light_3, light_4]
+
+# getting the initial times by running the IP part
+time_updater( intersection, ip_time= DEBUG)  # IP call
 
 # making a loop that will always execute handling the operation
 while( 1):
     while( not emergency):
 
         # breaking loop if letter q is pressed and held
-        # if loop_exiter( 'q', DEBUG):
-        #     exit_program = True
-        #     break
+        if loop_exiter( 'q', DEBUG):
+            exit_program = True
+            break
 
         if DEBUG:
-            print( 'times are: ', traffic_time)
+            print( 'times are: ', get_all_traffic_times( intersection))
         
-        # updating the times
-        time_updater( intersection, traffic_time)
 
         # checking if all are inactive 
         print( all_inactive_converter( intersection, DEBUG))
@@ -67,34 +68,36 @@ while( 1):
         # choosing the light that has max time remaining and is active
         chosen_id = traffic_light_chooser( intersection)
         chosen_traffic_light = intersection[chosen_id]
+        objectsAtStart = chosen_traffic_light.objectsArray
 
         # showing the lights for the chosen traffic light
         light_thread = threading.Thread( target= chosen_traffic_light.show_light)
         light_thread.start()
 
+        # updating the values and using a thread to do it to leave the emergency 
+        update_thread = threading.Thread( target= time_updater, args= [ intersection, True, chosen_id]) # IP call
+        update_thread.start()
+
         # checking for emergency vehicles while showing lights
         # for now pressing e causes emergency
-        # if emergency_updater( chosen_traffic_light.green_time, 'e'):
-        #     emergency = True 
-        #     del light_thread
-        #     print( 'light thread deactivated:', not light_thread.is_alive())
-        #     break
+        if emergency_updater( chosen_traffic_light.green_time, 'e'):
+            emergency = True 
+            del light_thread
+            print( 'light thread deactivated:', not light_thread.is_alive())
+            break
 
         """
         here we need to change for real values
-        """
-        if DEBUG:
-            traffic_time= np.random.randint( 10, size= 4)
-        else:
-            traffic_time= np.random.randint( 100, size= 4)
-
-        # traffic_time = [ 0, 0, 0, 0]
-        # updating the times
-        time_updater( intersection, traffic_time)
-        
+        """        
 
         # ending the light and preparing for next round of the green lights
         light_thread.join()
+        update_thread.join()
+
+        # goes into training only if limit is not passed
+        if chosen_traffic_light.isTraining:
+            train_thread = threading.Thread( target= chosen_traffic_light.light_trainer, args= [objectsAtStart]) # IP call
+            train_thread.start()
 
         if DEBUG:
             print( 'loop finished')
