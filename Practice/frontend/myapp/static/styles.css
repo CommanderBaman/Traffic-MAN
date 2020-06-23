@@ -54,12 +54,14 @@ h1 {
       height: 30vh;
       width: 25vw;
       z-index: 53;
+
 }
 hr.stripesh {
       position: absolute;
       border-top: 5px dashed white;
+      left:14.5vw;
       top: 50vh;
-      width: 99vw;
+      width: 70vw;
       z-index: 51;
 }
 vl.stripesv{
@@ -78,11 +80,11 @@ vl.stripesv{
       border-radius: 50%;
       height: 10vw;
       width: 10vw;
-
+      display: none;
 }
 
 .signal1  {
-      border-radius: 100px;
+      border-radius: 5px;
       left: -2vw;
       position: absolute;
       background-color: #E60000;
@@ -93,7 +95,7 @@ vl.stripesv{
 }
 
 .signal2{
-      border-radius: 100px;
+      border-radius: 5px;
       top: -4vh;
       left: 13vw;
       position: absolute;
@@ -104,7 +106,7 @@ vl.stripesv{
 }
 
 .signal3{
-      border-radius: 100px;
+      border-radius: 5px;
       right: -2vw;
       top: 15.5vh;
       position: absolute;
@@ -115,7 +117,7 @@ vl.stripesv{
 }
 
 .signal4{
-      border-radius: 100px;
+      border-radius:5px;
       bottom: -4vh;
       position: absolute;
       background-color: #4CBB17;

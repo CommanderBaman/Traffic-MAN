@@ -1,29 +1,130 @@
 {% extends 'base.html' %}
 {% block head %}
 {% load static %}
-            <link rel="stylesheet" href="{% static 'styles.css' %}">
- {% endblock head %}
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+
+<style>
+      #img0 {
+            
+            width: 200px;
+            height: 150px;
+            position: absolute;
+            left: 0;
+      }
+
+      #img1 {
+            right: 0;
+            width: 200px;
+            height: 150px;
+            position: absolute;
+            top: 0;
+      }
+
+      #img2 {
+
+            width: 200px;
+            height: 150px;
+            position: absolute;
+            right: 0;
+      }
+
+      #img3 {
+
+            right: 0;
+            width: 200px;
+            height: 150px;
+            position: absolute;
+            bottom: 0;
+      }
+
+      #imgd {
+            position: absolute;
+            bottom: 0;
+            right: 35vw;
+      }
+</style>
+{% endblock head %}
 {% block body %}
-<h1>hello</h1>
-<button class="btn btn-success">Start</button> 
+
+
+
+<button id='start' class="btn btn-success">Start</button>
+<button id='shuffle' class="btn btn-info" onclick="shuffleImage()">Shuffle</button>
 {% load static %}
 <div class="contain">
-<img id='background' src="{% static 'background.jpg'%}" alt="Couldn't Load Image">   
+      <img id='background' src="{% static 'background.jpg'%}" alt="Couldn't Load Image">
 
-<div class="green" style=" top: 0;"></div>
-<div class="green" style=" right: 0;top: 0;"></div>
-<div class="green" style=" bottom: 0;"></div>
-<div class="green" style=" bottom: 0;right: 0;"></div>
-<div class="horizontal"></div>
-<div class="vertical"></div>
-<div class="center">
-      <div class="circl"></div>
-      <div class="traffic signal1"></div>
-      <div class="traffic signal2"></div>
-      <div class="traffic signal3"></div>
-      <div class="traffic signal4"></div>
+      <div class="green" style=" top: 0;"></div>
+      <div class="green" style=" right: 0;top: 0;"></div>
+      <div class="green" style=" bottom: 0;"></div>
+      <div class="green" style=" bottom: 0;right: 0;"></div>
+      <div class="horizontal"><img id='img2' src='{{img2.picture}}' alt="kjk"><img id='img0' src={{img0.picture}}
+                  alt="kjk"></div>
+      <div class="vertical"> <img id='img1' src={{img1.picture}} alt="kjk"><img id='img3' src={{img3.picture}}
+                  alt="kjk">
+      </div>
+      <div class="center">
+            <div class="circl"></div>
+            <div class="traffic signal1"></div>
+            <div class="traffic signal2"></div>
+            <div class="traffic signal3"></div>
+            <div class="traffic signal4"></div>
+      </div>
+      <hr class="stripesh">
+      <vl class="stripesv">
+
+
+
+
+
+
+
 </div>
-<hr class="stripesh">
-<vl class="stripesv"></div>
-{% endblock body %} 
-<script>doc</script>
+
+<script>
+      $(document).ready(function () {
+
+            $('#start').click(function () {
+                  alert('clicked start')
+            })
+
+      });
+
+      function getRandom(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) +
+            min; //The maximum is inclusive and the minimum is inclusive 
+      }
+
+      function shuffleImage() {
+            img0 = getRandom(1, 5)
+            img1 = getRandom(1, 5)
+            img2 = getRandom(1, 5)
+            img3 = getRandom(1, 5)
+
+            src0 = 'http://127.0.0.1:8000/' + img0 + '.jpg';
+            src1 = 'http://127.0.0.1:8000/' + img1 + '.jpg'
+            src2 = 'http://127.0.0.1:8000/' + img2 + '.jpg'
+            src3 = 'http://127.0.0.1:8000/' + img3 + '.jpg'
+
+            document.getElementById('img0').src = src0;
+            document.getElementById('img1').src = src1;
+            document.getElementById('img2').src = src2;
+            document.getElementById('img3').src = src3;
+            fetch('http://127.0.0.1:8000/current/1', {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                              img0: img0,
+                              img1:img1,
+                              img2:img2,
+                              img3:img3
+
+                        }),
+                        headers: {'Content-type': 'application/json'}
+                  })
+                  .then(response => response.json())
+                  .then(json => console.log(json))
+      }
+</script>
+{% endblock body %}

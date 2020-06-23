@@ -16,8 +16,27 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from myapp import views
+from django.conf import settings
+from django.conf.urls.static import static
+from django.conf.urls import url, include
+
+
+from rest_framework import routers
+from django.views.decorators.csrf import csrf_exempt
+
+router = routers.DefaultRouter()
+router.register(r'images', views.ImageViewSet)
+router.register(r'currentimages', views.CurrentImagesViewSet)
+router.register(r'trafficlights', views.CurrentImagesViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',views.my_view)
+    path('', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('home',views.my_view),
+    # path('picture/<int:pk>',views.getImage.as_view()),
+    path("current/<int:pk>",csrf_exempt(views.getCurrentImage.as_view()))
 ]
+
+if settings.DEBUG == True: 
+        urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
