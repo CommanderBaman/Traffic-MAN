@@ -9,12 +9,15 @@ from os import getcwd
 path.append( getcwd() + '/IP')
 from ip_functions import detect_class_in_img
 
-def loop_exiter( button_id=0 ):
+def loop_exiter( intersection= 0):
     """returns True if key_stroke is pressed in the computer"""
     
-    if button_id == 'emergency':
-        if any( get_emergency_values().values()):
-            return True
+    if intersection != 0:
+        for tl in intersection:
+            if tl.emergency:
+                return True
+        
+        return False
 
     else:
         r = requests.get('http://127.0.0.1:8000/current/1',headers= {'Content-type': 'application/json'})
@@ -69,7 +72,7 @@ def time_updater( intersection, in_loop= False, chosen_id= 5, ip_time= False):
     if its is in loop then sleeps for green time - 3 seconds\n
     """
 
-    # checking if its in loop 
+    # checking if its in the main loop 
     if in_loop:
         # just final checking
         if chosen_id > 3:
@@ -88,36 +91,18 @@ def time_updater( intersection, in_loop= False, chosen_id= 5, ip_time= False):
 
     if ip_time:
         print( 'IP run in {} seconds'.format( np.round( end - start, 3)))
+
     return 'time updated'
 
-def get_emergency_values():
-    """
-    Gets all the emergency informations stored at the django server
-    and returns the value of the emergency at each intersection
-    """
-    # requesting data from server
-    r = requests.get('http://127.0.0.1:8000/trafficlights/')
-    r = r.json()
-    
-    ret_dict = {}
-
-    # extracting data
-    for tl_info_dict in r: 
-        # here emergency variable is set to emergency and the id of the light to sn tanmay check kar
-        ret_dict.update( {tl_info_dict['sn'] :tl_info_dict['emergency']})
-        # print( tl_info_dict['emergency'])
-    
-    return ret_dict
-
-
-def emergency_updater( check_time):
+def emergency_detector( check_time, intersection):
     """
     Detects if there is any emergency in the system by regularly checking the system
     """
     for _ in range( 30):
-        # detecting the emergency for 30 times in a program
-        if loop_exiter('emergency'):
+        # detecting the emergency for 30 times in a progra, 
+        if loop_exiter( intersection):
             return True
+
         # sleeping for the rest of the time
         sleep( check_time/30)
     

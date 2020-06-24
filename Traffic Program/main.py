@@ -11,10 +11,13 @@ INPUT:\n
 a numpy array from ML file that contains the time required to\n
 clean the intersections\n
 \n
+WARNING:\n
+Training is turned off. Turn it on by increasing the trainLimit\n
+in ml_classes file in ML folder
 """
 import numpy as np 
 from classes import Traffic_Light
-from functions import loop_exiter, traffic_light_chooser, all_inactive_converter, time_updater, emergency_updater, get_all_traffic_times, get_emergency_values
+from functions import loop_exiter, traffic_light_chooser, all_inactive_converter, time_updater, emergency_detector, get_all_traffic_times
 from time import sleep
 import threading
 from sys import path 
@@ -33,7 +36,7 @@ img_dir4 = 'http://127.0.0.1:8000/4.jpg'
 # taking random values right now for testing
 
 # emergency variable
-emergency = False
+emergency_loop = False
 
 # variable for exiting the full program
 exit_program = False
@@ -51,7 +54,7 @@ time_updater( intersection, ip_time= DEBUG)  # IP call
 
 # making a loop that will always execute handling the operation
 while( 1):
-    while( not emergency):
+    while( not emergency_loop):
 
         # breaking loop if letter q is pressed and held
         if loop_exiter():
@@ -72,7 +75,7 @@ while( 1):
         greenTime = chosen_traffic_light.green_time
 
         # showing the lights for the chosen traffic light
-        light_thread = threading.Thread( target= chosen_traffic_light.show_light)
+        light_thread = threading.Thread( target= chosen_traffic_light.show_light, args= [intersection])
         light_thread.start()
 
         # updating the values and using a thread to do it to leave the emergency 
@@ -80,10 +83,9 @@ while( 1):
         update_thread.start()
 
         # checking for emergency vehicles while showing lights
-        # for now pressing e causes emergency
-        if emergency_updater( greenTime):
-            emergency = True 
-            emergency_value_dict = get_emergency_values()
+        # for now pressing button on website causes emergency
+        if emergency_detector( greenTime, intersection):
+            emergency_loop = True 
             break
 
         """
@@ -119,29 +121,35 @@ while( 1):
         tl.change_color( 'red')
         
     # extracting the light number
-    for key in emergency_value_dict:
-        if emergency_value_dict[key]:
-            emer_id = key
+    for indx, tl in enumerate( intersection):
+        if tl.emergency:
+            emer_id = indx 
+
     print( 'emergency at light {}'.format( emer_id))
 
     # choosing the light that has emergency
     emer_traffic_light = intersection[emer_id]   
 
     print( 'changing light {} to green-emergency'.format( emer_id))
-    emer_traffic_light.change_color( 'green', emergency)
+    emer_traffic_light.change_color( 'green', emergency_loop)
+
+    emer_timer = 0
 
     # checking for emergency after every second
-    while( emergency):
+    while( emergency_loop):
         sleep( 1)
-        emergency = emer_traffic_light.update_emergency()
+        emer_timer += 1
+        emergency_loop = emer_traffic_light.emergency 
+        # if emer_timer >= 10:
+        #     break
 
-    ip_thread = threading.Thread( target=time_updater, args=[intersection])
+    ip_thread = threading.Thread( target= time_updater, args=[intersection])
     ip_thread.start()
 
+    print( 'Emergency for {} seconds'.format( emer_timer))
     print( 'changing light {} to yellow for 5 seconds-emergency'.format( emer_id))
     emer_traffic_light.change_color( 'yellow', True)
     sleep( 5)
-
     
     print( 'changing light {} to red-emergency'.format( emer_id))
     emer_traffic_light.change_color( 'red', True)
@@ -149,7 +157,8 @@ while( 1):
     print( 'resetting the traffic lights...')
     print( all_inactive_converter( intersection, DEBUG, emergency= True))
 
-    emergency = False
+    emergency_loop = False
+    ip_thread.join()
 
     print( '\n\n')
 
