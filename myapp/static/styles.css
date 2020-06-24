@@ -83,47 +83,48 @@ vl.stripesv{
       display: none;
 }
 
-.signal1  {
+.signal0  {
       border-radius: 5px;
       left: -2vw;
       position: absolute;
-      background-color: #E60000;
+      background-color: white;
       width: 2vw;
       height: 14.6vh;
       padding: 0;
       margin: 0;
 }
 
-.signal2{
+.signal1{
       border-radius: 5px;
       top: -4vh;
       left: 13vw;
       position: absolute;
-      background-color: #4CBB17;
+      background-color: white;
       width: 12vw;
       height: 4vh;
 
 }
 
-.signal3{
+.signal2{
       border-radius: 5px;
       right: -2vw;
       top: 15.5vh;
       position: absolute;
-      background-color:  #FF7800;
+      background-color:  white;
       width: 2vw;
       height: 14.5vh; 
          
 }
 
-.signal4{
+.signal3{
       border-radius:5px;
       bottom: -4vh;
       position: absolute;
-      background-color: #4CBB17;
+      background-color: white;
       width: 12.5vw;
       height: 4vh;
-      
-      
+}
 
+a:hover {
+      text-decoration: none;
 }

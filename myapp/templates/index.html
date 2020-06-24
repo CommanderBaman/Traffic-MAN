@@ -4,55 +4,37 @@
 <link rel="stylesheet" href="{% static 'styles.css' %}">
 
 <style>
-      #img0 {
-            
-            width: 200px;
-            height: 150px;
+      #img0 {width: 200px;height: 150px;
             position: absolute;
-            left: 0;
-      }
+            left: 0;}
 
-      #img1 {
-            right: 0;
-            width: 200px;
-            height: 150px;
+      #img1 {right: 0;
+            width: 200px;height: 150px;
             position: absolute;
-            top: 0;
-      }
+            top: 0;}
 
-      #img2 {
-
-            width: 200px;
-            height: 150px;
+      #img2 {width: 200px;height: 150px;
             position: absolute;
-            right: 0;
-      }
+            right: 0;bottom: 0;}
 
-      #img3 {
-
-            right: 0;
-            width: 200px;
-            height: 150px;
+      #img3 {left: 0;
+            width: 200px;height: 150px;
             position: absolute;
-            bottom: 0;
-      }
+            bottom: 0;}
 
-      #imgd {
-            position: absolute;
-            bottom: 0;
-            right: 35vw;
-      }
+      #emg0 {position: absolute;left:250px;top: 20px;}
+      #emg1{position: absolute;right: 20px;top:180px;}
+      #emg2{position: absolute;right: 250px;bottom: 20px;}
+      #emg3{position: absolute;left: 20px;bottom:160px;}      
 
-      a:hover {
-            text-decoration: none;
-      }
+      
 </style>
 {% endblock head %}
 {% block body %}
 
 
 
-<button id='start' onclick="startProgram()"  class="btn btn-success"><a class="text-warning" href="../start">Start</a></button>
+<button id='start' onclick="startProgram()" class="btn btn-success"><a href="../home" class="text-warning">Start</a></button>
 
 <button id='shuffle' class="btn btn-info" onclick="shuffleImage()">Shuffle</button>
 
@@ -66,41 +48,83 @@
       <div class="green" style=" right: 0;top: 0;"></div>
       <div class="green" style=" bottom: 0;"></div>
       <div class="green" style=" bottom: 0;right: 0;"></div>
-      <div class="horizontal"><img id='img2' src='{{img2.picture}}' alt="kjk"><img id='img0' src={{img0.picture}}
-                  alt="kjk"></div>
-      <div class="vertical"> <img id='img1' src={{img1.picture}} alt="kjk"><img id='img3' src={{img3.picture}}
-                  alt="kjk">
+      <div class="horizontal">
+            <img id='img2' src='{{img2.picture}}' alt="kjk">
+            <img id='img0' src={{img0.picture}} alt="kjk">
+            <a id='emg0' onclick="setEmergency('0')" class="btn">Emergency</a>
+            <a id='emg2' onclick="setEmergency('2')" class="btn">Emergency</a></div>
+      <div class="vertical">
+            <img id='img1' src={{img1.picture}} alt="kjk">
+            <img id='img3' src={{img3.picture}} alt="kjk">
+            <a id='emg1' onclick="setEmergency('1')" class="btn">Emergency</a>
+            <a id='emg3' onclick="setEmergency('3')" class="btn">Emergency</a>
       </div>
       <div class="center">
             <div class="circl"></div>
-            <div class="traffic signal1"></div>
-            <div class="traffic signal2"></div>
-            <div class="traffic signal3"></div>
-            <div class="traffic signal4"></div>
+            <div id='signal0' class="traffic signal0"></div>
+            <div id='signal1' class="traffic signal1"></div>
+            <div id='signal2' class="traffic signal2"></div>
+            <div id='signal3' class="traffic signal3"></div>
       </div>
       <hr class="stripesh">
       <vl class="stripesv">
-
-
-
-
-
-
-
 </div>
 
 <script>
       $(document).ready(function () {
 
-      
+            setInterval(function () {
+                  $.get("http://127.0.0.1:8000/trafficlights/", function (data, status) {
+                        document.getElementById('signal0').style.backgroundColor =
+                              data['0'].color
+                        document.getElementById('signal1').style.backgroundColor =
+                              data['1'].color
+                        document.getElementById('signal2').style.backgroundColor =
+                              data['2'].color
+                        document.getElementById('signal3').style.backgroundColor =
+                              data['3'].color
+                        for(var i=0;i<=3;i++){  
+                              j=i.toString()    
+                              if(data[j].emergency == true)
+                              {document.getElementById('emg'+j).style.backgroundColor = 'red'}
+                              else 
+                              {document.getElementById('emg'+j).style.backgroundColor = 'white'}
+                        }
+
+                        // console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
+                  });
+
+            }, 300);
+            
 
       });
+      function setEmergency(id){
+            
+            var emg
+            $.get("http://127.0.0.1:8000/tl/"+id, function (data, status) {
+                  emg = data.emergency
+                  
+            
+            fetch('http://127.0.0.1:8000/tl/'+id, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                              
+                              emergency : !emg
+                        }),
+                        headers: {
+                              'Content-type': 'application/json'
+                        }
+                  })
+                  .then(response => response.json())
+                  .then(json => console.log(json))
+            })
+      }
 
       function getRandom(min, max) {
             min = Math.ceil(min);
             max = Math.floor(max);
             return Math.floor(Math.random() * (max - min + 1)) +
-            min; //The maximum is inclusive and the minimum is inclusive 
+                  min; //The maximum is inclusive and the minimum is inclusive 
       }
 
       function shuffleImage() {
@@ -122,25 +146,28 @@
                         method: 'PUT',
                         body: JSON.stringify({
                               img0: img0,
-                              img1:img1,
-                              img2:img2,
-                              img3:img3
-
+                              img1: img1,
+                              img2: img2,
+                              img3: img3
                         }),
-                        headers: {'Content-type': 'application/json'}
+                        headers: {
+                              'Content-type': 'application/json'
+                        }
                   })
                   .then(response => response.json())
                   .then(json => console.log(json))
       }
+
       function startProgram() {
-           console.log('started')
+            console.log('started')
             fetch('http://127.0.0.1:8000/current/1', {
                         method: 'PUT',
                         body: JSON.stringify({
-                             programStarted:true
-
+                              programStarted: true
                         }),
-                        headers: {'Content-type': 'application/json'}
+                        headers: {
+                              'Content-type': 'application/json'
+                        }
                   })
                   .then(response => response.json())
                   .then(json => console.log(json))
@@ -153,10 +180,11 @@
             fetch('http://127.0.0.1:8000/current/1', {
                         method: 'PUT',
                         body: JSON.stringify({
-                             programStarted:false
-
+                              programStarted: false
                         }),
-                        headers: {'Content-type': 'application/json'}
+                        headers: {
+                              'Content-type': 'application/json'
+                        }
                   })
                   .then(response => response.json())
                   .then(json => console.log(json))

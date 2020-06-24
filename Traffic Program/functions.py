@@ -96,9 +96,9 @@ def get_emergency_values():
     and returns the value of the emergency at each intersection
     """
     # requesting data from server
-    r = requests.get('http://127.0.0.1:8000/trafficlights',headers={'Content-type': 'application/json'})
+    r = requests.get('http://127.0.0.1:8000/trafficlights/')
     r = r.json()
-
+    
     ret_dict = {}
 
     # extracting data

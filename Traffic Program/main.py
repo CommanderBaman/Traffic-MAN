@@ -84,7 +84,6 @@ while( 1):
         if emergency_updater( greenTime):
             emergency = True 
             emergency_value_dict = get_emergency_values()
-            print( 'light thread deactivated:', not light_thread.is_alive())
             break
 
         """
@@ -133,13 +132,15 @@ while( 1):
 
     # checking for emergency after every second
     while( emergency):
-        emer_traffic_light.emergency = True
         sleep( 1)
         emergency = emer_traffic_light.update_emergency()
 
-    print( 'changing light {} to yellow for 4 seconds-emergency'.format( emer_id))
+    ip_thread = threading.Thread( target=time_updater, args=[intersection])
+    ip_thread.start()
+
+    print( 'changing light {} to yellow for 5 seconds-emergency'.format( emer_id))
     emer_traffic_light.change_color( 'yellow', True)
-    sleep( 4)
+    sleep( 5)
 
     
     print( 'changing light {} to red-emergency'.format( emer_id))
@@ -147,6 +148,8 @@ while( 1):
 
     print( 'resetting the traffic lights...')
     print( all_inactive_converter( intersection, DEBUG, emergency= True))
+
+    emergency = False
 
     print( '\n\n')
 

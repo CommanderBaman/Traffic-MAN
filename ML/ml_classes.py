@@ -22,7 +22,7 @@ class TrafficModel:
         self.trainedOn = 0
         self.lr_time = lr_time
         self.lr_obj = lr_obj
-        self.trainLimit = 100
+        self.trainLimit = 0
     
     @property
     def isTraining( self):
