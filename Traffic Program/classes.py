@@ -49,7 +49,7 @@ class Traffic_Light( TrafficModel):
         self.color = color 
         self.inactive = inactive
         self.img_link = img_link
-        requests.put('http://127.0.0.1:8000/tl/'+str(self.id),data={'color':self.color})
+        requests.patch('http://127.0.0.1:8000/trafficlights/'+str( self.id + 1) + '/',data={'color':self.color})
 
     def __str__( self):
         return 'This is a traffic light with color {} waiting for {} seconds'.format( self.color, self.time_val)
@@ -61,14 +61,14 @@ class Traffic_Light( TrafficModel):
     def yellow_time( self):
         """calculates the yellow time of the light"""
         yt = max( 2, min( self.time_val * 0.1, 5))
-        requests.put('http://127.0.0.1:8000/tl/'+str(self.id),data={'yellowTime':yt})
+        requests.patch('http://127.0.0.1:8000/trafficlights/'+str( self.id + 1) + '/',data={'yellowTime':yt})
         return yt
     
     @property
     def green_time( self):
         """calculates the yellow time of the light""" 
         gt = max( self.time_val - self.yellow_time, 0)
-        requests.put('http://127.0.0.1:8000/tl/'+str(self.id),data={'greenTime':gt})
+        requests.patch('http://127.0.0.1:8000/trafficlights/'+str( self.id + 1) + '/',data={'greenTime':gt})
         return gt
 
     @property
@@ -107,7 +107,7 @@ class Traffic_Light( TrafficModel):
                     self.color = num_to_color[color]
                 else:
                     raise NotImplementedError
-                requests.put('http://127.0.0.1:8000/tl/'+str(self.id),data={'color':self.color}) 
+                requests.patch('http://127.0.0.1:8000/trafficlights/'+str( self.id + 1) + '/',data={'color':self.color}) 
 
         else:
             if type( color) == str:
@@ -116,7 +116,7 @@ class Traffic_Light( TrafficModel):
                 self.color = num_to_color[color]
             else:
                 raise NotImplementedError
-            requests.put('http://127.0.0.1:8000/tl/'+str(self.id),data={'color':self.color})   
+            requests.patch('http://127.0.0.1:8000/trafficlights/'+str( self.id + 1) + '/',data={'color':self.color})  
 
 
     def wait( self, light_time):
@@ -165,7 +165,7 @@ class Traffic_Light( TrafficModel):
         """
         updates the image link stored in the class
         """        
-        r = requests.get('http://127.0.0.1:8000/current/1',headers= {'Content-type': 'application/json'})
+        r = requests.get('http://127.0.0.1:8000/currentimages/1/',headers= {'Content-type': 'application/json'})
         r = r.json()
         self.img_link = 'http://127.0.0.1:8000/' + str(r['img' + str(self.id)]) + '.jpg'
    

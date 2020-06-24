@@ -20,7 +20,7 @@ def loop_exiter( intersection= 0):
         return False
 
     else:
-        r = requests.get('http://127.0.0.1:8000/current/1',headers= {'Content-type': 'application/json'})
+        r = requests.get('http://127.0.0.1:8000/currentimages/1/',headers= {'Content-type': 'application/json'})
         r = r.json()
         if not r['programStarted'] :
             # print('loop_exiter is true')

@@ -27,6 +27,6 @@ class TrafficLight(models.Model):
       sn=models.IntegerField(default=0)
       greenTime=models.FloatField(default=0)
       yellowTime=models.FloatField(default=0)
-      emergency = models.BooleanField(default=False)
+      emergency = models.BooleanField(default=True)
       def __str__(self):
             return str(self.sn)+' - '+self.color+' - '+str(self.emergency)

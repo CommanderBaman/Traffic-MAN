@@ -18,12 +18,12 @@ h1 {
 .green {
       position: absolute;
 
-
+      z-index: 70;
       background-color: lightgreen;
       width: 37.5vw;
       height: 37.5vh;
       background-image: linear-gradient(-90deg, cyan, blue);
-      display: none;
+      
 }
 
 .horizontal {
