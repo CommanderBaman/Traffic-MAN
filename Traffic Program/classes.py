@@ -21,6 +21,8 @@ from db_functions import getLastPoint
 path.append( getcwd() + '/IP')
 from ip_functions import detect_class_in_img
 
+# getting a function to check for emergency values
+from functions import get_emergency_values 
 
 #assining values to colors
 color_to_num = { 'red': 0, 'yellow':1, 'green': 2}
@@ -48,6 +50,7 @@ class Traffic_Light( TrafficModel):
         self.color = color 
         self.inactive = inactive
         self.img_link = img_link
+        self.emergency = False 
         requests.put('http://127.0.0.1:8000/tl/'+str(self.id),data={'color':self.color})
 
     def __str__( self):
@@ -82,15 +85,26 @@ class Traffic_Light( TrafficModel):
         """time_val consists the time allotted to the light\n"""
         return self.timeVal( self.objectsArray)
     
-    def change_color( self, color):
+    def change_color( self, color, from_emergency= False):
         """color is either a string or a number"""
-        if type( color) == str:
-            self.color = color
-        elif type( color) == int:
-            self.color = num_to_color[color]
+        if self.emergency:
+            if from_emergency:
+                if type( color) == str:
+                    self.color = color
+                elif type( color) == int:
+                    self.color = num_to_color[color]
+                else:
+                    raise NotImplementedError
+                requests.put('http://127.0.0.1:8000/tl/'+str(self.id),data={'color':self.color}) 
+
         else:
-            raise NotImplementedError
-        requests.put('http://127.0.0.1:8000/tl/'+str(self.id),data={'color':self.color})   
+            if type( color) == str:
+                self.color = color
+            elif type( color) == int:
+                self.color = num_to_color[color]
+            else:
+                raise NotImplementedError
+            requests.put('http://127.0.0.1:8000/tl/'+str(self.id),data={'color':self.color})   
 
 
     def wait( self, light_time):
@@ -149,7 +163,16 @@ class Traffic_Light( TrafficModel):
         # write over 
         return objectsArray / 10
     
-    
+    def update_emergency( self):
+        """
+        Takes out the emergency value from the server\n
+        This is done because of checking of emergency light again and again
+        """ 
+        # getting emergency values
+        emergency_info_dict = get_emergency_values()
+        self.emergency = emergency_info_dict[self.id]
+
+        return self.emergency
 
 
    

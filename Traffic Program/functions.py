@@ -12,11 +12,16 @@ from ip_functions import detect_class_in_img
 def loop_exiter( button_id=0 ):
     """returns True if key_stroke is pressed in the computer"""
     
-    r = requests.get('http://127.0.0.1:8000/current/1',headers= {'Content-type': 'application/json'})
-    r = r.json()
-    if not r['programStarted'] :
-        print('loop_exiter is true')
-        return True
+    if button_id == 'emergency':
+        if any( get_emergency_values().values()):
+            return True
+
+    else:
+        r = requests.get('http://127.0.0.1:8000/current/1',headers= {'Content-type': 'application/json'})
+        r = r.json()
+        if not r['programStarted'] :
+            # print('loop_exiter is true')
+            return True
 
     return False
 
@@ -85,16 +90,34 @@ def time_updater( intersection, in_loop= False, chosen_id= 5, ip_time= False):
         print( 'IP run in {} seconds'.format( np.round( end - start, 3)))
     return 'time updated'
 
-def emergency_updater( check_time, key_stroke):
+def get_emergency_values():
+    """
+    Gets all the emergency informations stored at the django server
+    and returns the value of the emergency at each intersection
+    """
+    # requesting data from server
+    r = requests.get('http://127.0.0.1:8000/trafficlights',headers={'Content-type': 'application/json'})
+    r = r.json()
+
+    ret_dict = {}
+
+    # extracting data
+    for tl_info_dict in r: 
+        # here emergency variable is set to emergency and the id of the light to sn tanmay check kar
+        ret_dict.update( {tl_info_dict['sn'] :tl_info_dict['emergency']})
+        # print( tl_info_dict['emergency'])
+    
+    return ret_dict
 
 
-
-    r=requests.get('http://127.0.0.1:8000/trafficlights',headers={'Content-type': 'application/json'})
+def emergency_updater( check_time):
+    """
+    Detects if there is any emergency in the system by regularly checking the system
+    """
     for _ in range( 30):
-        # detecting the emergency only when e is pressed
-        if loop_exiter():
+        # detecting the emergency for 30 times in a program
+        if loop_exiter('emergency'):
             return True
-        
         # sleeping for the rest of the time
         sleep( check_time/30)
     

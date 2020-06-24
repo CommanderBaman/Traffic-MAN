@@ -14,7 +14,7 @@ clean the intersections\n
 """
 import numpy as np 
 from classes import Traffic_Light
-from functions import loop_exiter, traffic_light_chooser, all_inactive_converter, time_updater, emergency_updater, get_all_traffic_times
+from functions import loop_exiter, traffic_light_chooser, all_inactive_converter, time_updater, emergency_updater, get_all_traffic_times, get_emergency_values
 from time import sleep
 import threading
 from sys import path 
@@ -34,7 +34,6 @@ img_dir4 = 'http://127.0.0.1:8000/4.jpg'
 
 # emergency variable
 emergency = False
-emergency_value = 5 # contains the id of the traffic at which emergecy comes
 
 # variable for exiting the full program
 exit_program = False
@@ -70,6 +69,7 @@ while( 1):
         chosen_id = traffic_light_chooser( intersection)
         chosen_traffic_light = intersection[chosen_id]
         objectsAtStart = chosen_traffic_light.objectsArray
+        greenTime = chosen_traffic_light.green_time
 
         # showing the lights for the chosen traffic light
         light_thread = threading.Thread( target= chosen_traffic_light.show_light)
@@ -81,9 +81,9 @@ while( 1):
 
         # checking for emergency vehicles while showing lights
         # for now pressing e causes emergency
-        if emergency_updater( chosen_traffic_light.green_time, 'e'):
+        if emergency_updater( greenTime):
             emergency = True 
-            
+            emergency_value_dict = get_emergency_values()
             print( 'light thread deactivated:', not light_thread.is_alive())
             break
 
@@ -119,37 +119,31 @@ while( 1):
     for tl in intersection:
         tl.change_color( 'red')
         
-    """
-    here we need to change for real case scenario. 
-    right now choosing random values 
-    """
-    emergency_value = np.random.randint( 4)
-    print( 'emergency at light {}'.format( emergency_value))
+    # extracting the light number
+    for key in emergency_value_dict:
+        if emergency_value_dict[key]:
+            emer_id = key
+    print( 'emergency at light {}'.format( emer_id))
 
     # choosing the light that has emergency
-    emer_id = emergency_value
-    emer_traffic_light = intersection[chosen_id]   
+    emer_traffic_light = intersection[emer_id]   
 
+    print( 'changing light {} to green-emergency'.format( emer_id))
+    emer_traffic_light.change_color( 'green', emergency)
+
+    # checking for emergency after every second
     while( emergency):
-            
-        print( 'changing light {} to green-'.format( emer_id))
-        emer_traffic_light.change_color( 'green')
+        emer_traffic_light.emergency = True
+        sleep( 1)
+        emergency = emer_traffic_light.update_emergency()
 
-        """
-        here is another change 
-        we will update emergency values here but now assigning True after 20 seconds
-        we are thinking of updating after 1 second that is why there is a while loop
-        """
-        sleep( 20)
-        emergency = False
-
-    print( 'changing light {} to yellow for 4 seconds-'.format( emer_id))
-    emer_traffic_light.change_color( 'yellow')
+    print( 'changing light {} to yellow for 4 seconds-emergency'.format( emer_id))
+    emer_traffic_light.change_color( 'yellow', True)
     sleep( 4)
 
     
-    print( 'changing light {} to red-'.format( emer_id))
-    emer_traffic_light.change_color( 'red')
+    print( 'changing light {} to red-emergency'.format( emer_id))
+    emer_traffic_light.change_color( 'red', True)
 
     print( 'resetting the traffic lights...')
     print( all_inactive_converter( intersection, DEBUG, emergency= True))
