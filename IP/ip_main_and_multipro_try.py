@@ -8,13 +8,13 @@ from ip_functions import detect_class_in_img
 from sys import path 
 
 # database management functions
-path.append( getcwd() + '\\Database Management')
+path.append( getcwd() + '/Database Management')
 from db_functions import getAllData
 
-img_dir = getcwd() + '\\IP\\sample images\\1.jpg'
-img_dir2 = getcwd() + '\\IP\\sample images\\2.jpg'
-img_dir3 = getcwd() + '\\IP\\sample images\\3.jpg'
-img_dir4 = getcwd() + '\\IP\\sample images\\4.jpg'
+img_dir = getcwd() + '/IP/sample images/1.jpg'
+img_dir2 = getcwd() + '/IP/sample images/2.jpg'
+img_dir3 = getcwd() + '/IP/sample images/3.jpg'
+img_dir4 = getcwd() + '/IP/sample images/4.jpg'
 
 img = cv2.imread( img_dir, 1)
 img2 = cv2.imread( img_dir2, 1)

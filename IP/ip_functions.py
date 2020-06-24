@@ -1,12 +1,14 @@
 import numpy as np  
-from cv2 import cv2 
+import cv2 
 from os import getcwd
 from sys import path 
 from skimage import io
 # modules imported
 
 # database management functions
-path.append( getcwd() + '\\Database Management')
+
+path.append( getcwd() + '/Database Management')
+
 from db_functions import insertData, createTable, getLastPoint
 
 """
@@ -46,12 +48,12 @@ intialising YOLO
 YOLOv3 files needs to be stored in the current working directory
 """
 this_folder_dir = getcwd()
-yolo_folder = this_folder_dir + '\\yolo files'
+yolo_folder = this_folder_dir + '/yolo files'
 
 # getting required files
-yolo_classes_file = yolo_folder + '\\yolov3.txt'
-yolo_weights_file = yolo_folder + '\\yolov3.weights'
-yolo_config_file = yolo_folder + '\\yolov3.cfg'
+yolo_classes_file = yolo_folder + '/yolov3.txt'
+yolo_weights_file = yolo_folder + '/yolov3.weights'
+yolo_config_file = yolo_folder + '/yolov3.cfg'
 
 # reading the yolo classes file
 with open( yolo_classes_file, 'r') as ycf:

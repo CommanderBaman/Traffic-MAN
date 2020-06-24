@@ -6,12 +6,17 @@ from .serializers import *
 from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.response import Response
+from django.shortcuts import render,redirect
 from rest_framework.views import APIView
 import numpy as np
 import requests
-
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
+from sys import path as pt
+from sys import exit
+from os import getcwd
+pt.append(getcwd()+'/Traffic Program')
 
 context={'a':'b'}
 class ImageViewSet(viewsets.ModelViewSet):
@@ -22,9 +27,28 @@ class CurrentImagesViewSet(viewsets.ModelViewSet):
     queryset = CurrentImages.objects.all()
     serializer_class = CurrentImagesSerializer
 
+class TrafficLightViewSet(viewsets.ModelViewSet):
+    queryset = TrafficLight.objects.all()
+    serializer_class = TrafficLightSerializer
 
+def startedProgram(request):
+    
+    
+        currentimage=CurrentImages.objects.get(pk=1)
+        if(currentimage.programStarted):
+            
+            import main
+            return '1'
+    
+        
+        return redirect('http://127.0.0.1:8000/home')
 
-
+def endProgram(request):
+    
+     currentimage=CurrentImages.objects.get(pk=1)
+     requests.put('http://127.0.0.1:8000/current/1',data={'programStarted': False})
+     
+     return redirect('http://127.0.0.1:8000/home')
 
 def get_images():
           

@@ -8,17 +8,17 @@ import numpy as np
 from time import sleep
 from os import getcwd
 from sys import path 
-
+import requests
 # ML class from superclass of the traffic light
-path.append( getcwd() + '\\ML')
+path.append( getcwd() + '/ML')
 from ml_classes import TrafficModel
 
 # getting database functions
-path.append( getcwd() + '\\Database Management')
+path.append( getcwd() + '/Database Management')
 from db_functions import getLastPoint
 
 # getting IP functions
-path.append( getcwd() + '\\IP')
+path.append( getcwd() + '/IP')
 from ip_functions import detect_class_in_img
 
 
@@ -27,8 +27,8 @@ color_to_num = { 'red': 0, 'yellow':1, 'green': 2}
 num_to_color = { 0: 'red', 1: 'yellow', 2: 'green'}
 
 # directory for the vehicle and time database
-vehicle_db_dir = getcwd() + '\\ML\\vehicleData.db'
-time_db_dir = getcwd() + '\\Traffic Program\\timeData.db'
+vehicle_db_dir = getcwd() + '/ML/vehicleData.db'
+time_db_dir = getcwd() + '/Traffic Program/timeData.db'
 
 
 class Traffic_Light( TrafficModel):
@@ -48,7 +48,8 @@ class Traffic_Light( TrafficModel):
         self.color = color 
         self.inactive = inactive
         self.img_link = img_link
-    
+        requests.put('http://127.0.0.1:8000/tl/'+str(self.id),data={'color':self.color})
+
     def __str__( self):
         return 'This is a traffic light with color {} waiting for {} seconds'.format( self.color, self.time_val)
     
@@ -58,12 +59,16 @@ class Traffic_Light( TrafficModel):
     @property
     def yellow_time( self):
         """calculates the yellow time of the light"""
-        return max( 2, min( self.time_val * 0.1, 5))
+        yt = max( 2, min( self.time_val * 0.1, 5))
+        requests.put('http://127.0.0.1:8000/tl/'+str(self.id),data={'yellowTime':yt})
+        return yt
     
     @property
     def green_time( self):
         """calculates the yellow time of the light""" 
-        return max( self.time_val - self.yellow_time, 0)
+        gt = max( self.time_val - self.yellow_time, 0)
+        requests.put('http://127.0.0.1:8000/tl/'+str(self.id),data={'greenTime':gt})
+        return gt
 
     @property
     def objectsArray( self):
@@ -85,7 +90,9 @@ class Traffic_Light( TrafficModel):
             self.color = num_to_color[color]
         else:
             raise NotImplementedError
-    
+        requests.put('http://127.0.0.1:8000/tl/'+str(self.id),data={'color':self.color})   
+
+
     def wait( self, light_time):
         """sleeping the program for the required amount of time"""
         sleep( light_time)
@@ -116,18 +123,21 @@ class Traffic_Light( TrafficModel):
 
         return 'light {} handled'.format( self.id)     
     
-    def img_updater( self, img_link):
+    def img_updater( self):
         """
         updates the image link stored in the class
-        """
-        # idhar change kar tanmay
-        self.img_link = img_link
+        """        
+        r = requests.get('http://127.0.0.1:8000/current/1',headers= {'Content-type': 'application/json'})
+        r = r.json()
+        self.img_link = 'http://127.0.0.1:8000/' + str(r['img' + str(self.id)]) + '.jpg'
+   
         return 'image updated'
 
     def light_trainer( self, objectsAtStart):
         """
         It trains the light variables for each point
         """
+        self.img_updater()
         detect_class_in_img( self.img_link, self.id, is_url= True)
         self.train_with_object( self.threshold_decider( objectsAtStart), self.time_val)
         return None 
@@ -139,7 +149,7 @@ class Traffic_Light( TrafficModel):
         # write over 
         return objectsArray / 10
     
-
+    
 
 
    

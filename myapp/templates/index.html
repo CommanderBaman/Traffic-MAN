@@ -42,18 +42,22 @@
             bottom: 0;
             right: 35vw;
       }
+
+      a:hover {
+            text-decoration: none;
+      }
 </style>
 {% endblock head %}
 {% block body %}
 
 
 
-<button id='start' onclick="startProgram()" class="btn btn-success">Start</button>
+<button id='start' onclick="startProgram()"  class="btn btn-success"><a class="text-warning" href="../start">Start</a></button>
 
 <button id='shuffle' class="btn btn-info" onclick="shuffleImage()">Shuffle</button>
 
 
-<button id='end' onclick="endProgram()" class="btn btn-danger">End</button>
+<button id='end' onclick="endProgram()" class="btn btn-danger"><a href="../home">End</a></button>
 {% load static %}
 <div class="contain">
       <img id='background' src="{% static 'background.jpg'%}" alt="Couldn't Load Image">
@@ -129,7 +133,7 @@
                   .then(json => console.log(json))
       }
       function startProgram() {
-            alert('started')
+           console.log('started')
             fetch('http://127.0.0.1:8000/current/1', {
                         method: 'PUT',
                         body: JSON.stringify({
@@ -145,7 +149,7 @@
       }
 
       function endProgram() {
-            alert('ended')
+            console.log('ended')
             fetch('http://127.0.0.1:8000/current/1', {
                         method: 'PUT',
                         body: JSON.stringify({

@@ -23,10 +23,11 @@ from os import getcwd
 # this variable sees if the project is on trial on or not
 DEBUG = True
 
-img_dir = getcwd() + '\\IP\\sample images\\1.jpg'
-img_dir2 = getcwd() + '\\IP\\sample images\\2.jpg'
-img_dir3 = getcwd() + '\\IP\\sample images\\3.jpg'
-img_dir4 = getcwd() + '\\IP\\sample images\\4.jpg'
+#will have to change manually to change default display images
+img_dir =  'http://127.0.0.1:8000/1.jpg'
+img_dir2 = 'http://127.0.0.1:8000/2.jpg'
+img_dir3 = 'http://127.0.0.1:8000/3.jpg'
+img_dir4 = 'http://127.0.0.1:8000/4.jpg'
 
 # traffic_time contains all the time values 
 # taking random values right now for testing
@@ -54,7 +55,7 @@ while( 1):
     while( not emergency):
 
         # breaking loop if letter q is pressed and held
-        if loop_exiter( 'q', DEBUG):
+        if loop_exiter():
             exit_program = True
             break
 
@@ -82,7 +83,7 @@ while( 1):
         # for now pressing e causes emergency
         if emergency_updater( chosen_traffic_light.green_time, 'e'):
             emergency = True 
-            del light_thread
+            
             print( 'light thread deactivated:', not light_thread.is_alive())
             break
 

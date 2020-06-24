@@ -27,7 +27,7 @@ from django.views.decorators.csrf import csrf_exempt
 router = routers.DefaultRouter()
 router.register(r'images', views.ImageViewSet)
 router.register(r'currentimages', views.CurrentImagesViewSet)
-router.register(r'trafficlights', views.CurrentImagesViewSet)
+router.register(r'trafficlights', views.TrafficLightViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,7 +36,9 @@ urlpatterns = [
     path('home',views.my_view),
     # path('picture/<int:pk>',views.getImage.as_view()),
     path("current/<int:pk>",csrf_exempt(views.getCurrentImage.as_view())),
-    path("tl/<int:sn>",csrf_exempt(views.getTrafficLight.as_view()))
+    path("tl/<int:sn>",csrf_exempt(views.getTrafficLight.as_view())),
+    path('start',views.startedProgram),
+    path('end',views.endProgram)
 ]
 
 if settings.DEBUG == True: 

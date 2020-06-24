@@ -1,18 +1,23 @@
-from django.shortcuts import render
+# from django.shortcuts import render
 
-# Create your views here.
-from myapp.models import *
-from .serializers import *
-from django.db.models import Q
-from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework.views import APIView
-import numpy as np
-import requests
+# # Create your views here.
+# from myapp.models import *
+# from .serializers import *
+# from django.db.models import Q
+# from rest_framework import viewsets
+# from rest_framework.response import Response
+# from rest_framework.views import APIView
+# import numpy as np
+# import requests
 
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework import status
-
+# from django.views.decorators.csrf import csrf_exempt
+# from rest_framework import status
+from sys import path
+from os import getcwd
+path.append(getcwd()+'/Traffic Program')
+print(path)
+from classes import Traffic_Light
+print(Traffic_Light)
 context={'a':'b'}
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
@@ -23,6 +28,8 @@ class CurrentImagesViewSet(viewsets.ModelViewSet):
     serializer_class = CurrentImagesSerializer
 
 
+def startedProgram():
+    pass
 
 
 

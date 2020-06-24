@@ -1,19 +1,21 @@
 import numpy as np 
 from time import sleep, perf_counter
 import threading
-import keyboard
+import requests
 from sys import path 
 from os import getcwd
 
 # getting IP functions
-path.append( getcwd() + '\\IP')
+path.append( getcwd() + '/IP')
 from ip_functions import detect_class_in_img
 
-def loop_exiter( key_stroke, wait):
+def loop_exiter( button_id=0 ):
     """returns True if key_stroke is pressed in the computer"""
-    if wait:
-        sleep( 1)
-    if keyboard.is_pressed( key_stroke):
+    
+    r = requests.get('http://127.0.0.1:8000/current/1',headers= {'Content-type': 'application/json'})
+    r = r.json()
+    if not r['programStarted'] :
+        print('loop_exiter is true')
         return True
 
     return False
@@ -75,7 +77,7 @@ def time_updater( intersection, in_loop= False, chosen_id= 5, ip_time= False):
     start = perf_counter()
     # running IP for the intersection
     for tl in intersection:
-        # idhar change kar tanmay
+        tl.img_updater()
         detect_class_in_img( tl.img_link, tl.id, is_url= True)
     end = perf_counter()
 
@@ -85,9 +87,12 @@ def time_updater( intersection, in_loop= False, chosen_id= 5, ip_time= False):
 
 def emergency_updater( check_time, key_stroke):
 
+
+
+    r=requests.get('http://127.0.0.1:8000/trafficlights',headers={'Content-type': 'application/json'})
     for _ in range( 30):
         # detecting the emergency only when e is pressed
-        if loop_exiter( key_stroke, False):
+        if loop_exiter():
             return True
         
         # sleeping for the rest of the time

@@ -1,0 +1,129 @@
+* {
+      box-sizing: border-box;
+}
+
+h1 {
+      color: red;
+}
+
+.contain {
+      position: relative;
+}
+
+#background {
+      height: 100vh;
+      width: 99vw;
+}
+
+.green {
+      position: absolute;
+
+
+      background-color: lightgreen;
+      width: 37.5vw;
+      height: 37.5vh;
+      background-image: linear-gradient(-90deg, cyan, blue);
+      display: none;
+}
+
+.horizontal {
+      position: absolute;
+      height: 30vh;
+      top: 37.5vh;
+      background-color: grey;
+      width: 99vw;
+      z-index: 50;
+}
+
+.vertical {
+      position: absolute;
+      height: 100vh;
+      top: 0;
+      left: 37.5vw;
+      background-color: grey;
+      width: 25vw;
+      z-index: 50;
+      
+}
+.center {
+      
+      position: absolute;
+      background-color: grey;
+      top: 37.5vh;
+      left: 37.5vw;
+      height: 30vh;
+      width: 25vw;
+      z-index: 53;
+
+}
+hr.stripesh {
+      position: absolute;
+      border-top: 5px dashed white;
+      left:14.5vw;
+      top: 50vh;
+      width: 70vw;
+      z-index: 51;
+}
+vl.stripesv{
+      position: absolute;
+      border-left: 5px dashed white;
+      left: 50vw;
+      height: 100vh;
+      z-index: 51;
+}
+
+.circl {
+      left: 7.5vw;
+      top: 2vw;
+      position: absolute;
+      background-image: radial-gradient(circle, red, yellow, green);
+      border-radius: 50%;
+      height: 10vw;
+      width: 10vw;
+      display: none;
+}
+
+.signal1  {
+      border-radius: 5px;
+      left: -2vw;
+      position: absolute;
+      background-color: #E60000;
+      width: 2vw;
+      height: 14.6vh;
+      padding: 0;
+      margin: 0;
+}
+
+.signal2{
+      border-radius: 5px;
+      top: -4vh;
+      left: 13vw;
+      position: absolute;
+      background-color: #4CBB17;
+      width: 12vw;
+      height: 4vh;
+
+}
+
+.signal3{
+      border-radius: 5px;
+      right: -2vw;
+      top: 15.5vh;
+      position: absolute;
+      background-color:  #FF7800;
+      width: 2vw;
+      height: 14.5vh; 
+         
+}
+
+.signal4{
+      border-radius:5px;
+      bottom: -4vh;
+      position: absolute;
+      background-color: #4CBB17;
+      width: 12.5vw;
+      height: 4vh;
+      
+      
+
+}

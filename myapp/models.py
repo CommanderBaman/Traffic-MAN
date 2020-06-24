@@ -12,7 +12,14 @@ class CurrentImages(models.Model):
       img2=models.IntegerField(default=1)
       img3=models.IntegerField(default=1)
       programStarted = models.BooleanField(default=False)
-                  
+      # @property
+      # def started(self):
+      #       if(self.programStarted):
+      #             pass
+      #             return 1
+      #       else:
+      #             return 0      
+
 class TrafficLight(models.Model):
       
       color=models.CharField(default='white',max_length=20)
