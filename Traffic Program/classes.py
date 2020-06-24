@@ -9,6 +9,8 @@ from time import sleep
 from os import getcwd
 from sys import path 
 import requests
+# import threading
+
 # ML class from superclass of the traffic light
 path.append( getcwd() + '/ML')
 from ml_classes import TrafficModel
@@ -20,9 +22,6 @@ from db_functions import getLastPoint
 # getting IP functions
 path.append( getcwd() + '/IP')
 from ip_functions import detect_class_in_img
-
-# getting a function to check for emergency values
-from functions import get_emergency_values 
 
 #assining values to colors
 color_to_num = { 'red': 0, 'yellow':1, 'green': 2}
@@ -50,7 +49,6 @@ class Traffic_Light( TrafficModel):
         self.color = color 
         self.inactive = inactive
         self.img_link = img_link
-        self.emergency = False 
         requests.put('http://127.0.0.1:8000/tl/'+str(self.id),data={'color':self.color})
 
     def __str__( self):
@@ -85,6 +83,20 @@ class Traffic_Light( TrafficModel):
         """time_val consists the time allotted to the light\n"""
         return self.timeVal( self.objectsArray)
     
+    @property
+    def emergency( self):
+        """contains wether the current light is at emergency or not"""
+        # getting all information on traffic lights
+        r = requests.get('http://127.0.0.1:8000/trafficlights/')
+        r = r.json()
+
+        # extracting data from dictionary
+        for tl_info_dict in r:
+            if tl_info_dict['sn'] == self.id:
+                return tl_info_dict['emergency']
+        
+        return False
+    
     def change_color( self, color, from_emergency= False):
         """color is either a string or a number"""
         if self.emergency:
@@ -112,7 +124,7 @@ class Traffic_Light( TrafficModel):
         sleep( light_time)
         return 'slept for {} seconds'.format(light_time)
     
-    def show_light( self):
+    def show_light( self, intersection):
         """this shows the complete yellow and green light sequence"""
 
         # checking for damages in light
@@ -120,20 +132,32 @@ class Traffic_Light( TrafficModel):
             print( 'Bad Light {} time: {}  color: {}'.format( self.id, self.time_val, self.color))
             return 'Bad Light'
         
+        # making it inactive first
+        self.inactive = True
+
         # changing color to green 
         print( 'changing color of light {} to green for {} seconds'.format( self.id, self.green_time))
         self.change_color( 'green')
         self.wait( self.green_time)
         
+        # checking for emergency in system
+        for tl in intersection:
+            if tl.emergency:
+                return 'emergency condition is there'
+
         # changing color to yellow
         print( 'changing color of light {} to yellow for {} seconds'.format( self.id, self.yellow_time))
         self.change_color( 'yellow')
         self.wait( self.yellow_time)
 
+        # checking for emergency
+        for tl in intersection:
+            if tl.emergency:
+                return 'emergency condition is there'
+
         #changing color to red
         print( 'changing color of light {} to red'.format( self.id))
         self.change_color( 'red')
-        self.inactive = True
 
         return 'light {} handled'.format( self.id)     
     
@@ -162,20 +186,3 @@ class Traffic_Light( TrafficModel):
         """
         # write over 
         return objectsArray / 10
-    
-    def update_emergency( self):
-        """
-        Takes out the emergency value from the server\n
-        This is done because of checking of emergency light again and again
-        """ 
-        # getting emergency values
-        emergency_info_dict = get_emergency_values()
-        self.emergency = emergency_info_dict[self.id]
-
-        return self.emergency
-
-
-   
-
-    
-

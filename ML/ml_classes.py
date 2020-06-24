@@ -18,7 +18,6 @@ class TrafficModel:
         """
         self.weight= np.ones( (7, 1)) # both these are already initialised using the pre trained model
         self.bias= 1
-        self.inTraining = True
         self.trainedOn = 0
         self.lr_time = lr_time
         self.lr_obj = lr_obj
