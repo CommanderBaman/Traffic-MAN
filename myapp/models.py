@@ -3,14 +3,15 @@ from django.db import models
 # Create your models here.
 class Image(models.Model):
       picture=models.ImageField()
-      sn=models.IntegerField(default=1)
+      sn=models.IntegerField(primary_key=True,default=1)
       def __str__(self):
-            return str(self.sn)
+            return str(self.sn) +' - '+ str(self.picture)
 class CurrentImages(models.Model):
-      img0=models.IntegerField(default=1)
-      img1=models.IntegerField(default=1)
-      img2=models.IntegerField(default=1)
-      img3=models.IntegerField(default=1)
+      sn=models.IntegerField(primary_key=True,default=1)
+      img0=models.CharField(default='img0',max_length=50)
+      img1=models.CharField(default='img1',max_length=50)
+      img2=models.CharField(default='img2',max_length=50)
+      img3=models.CharField(default='img3',max_length=50)
       programStarted = models.BooleanField(default=False)
       # @property
       # def started(self):
@@ -27,6 +28,6 @@ class TrafficLight(models.Model):
       sn=models.IntegerField(default=0)
       greenTime=models.FloatField(default=0)
       yellowTime=models.FloatField(default=0)
-      emergency = models.BooleanField(default=True)
+      emergency = models.BooleanField(default=False)
       def __str__(self):
             return str(self.sn)+' - '+self.color+' - '+str(self.emergency)

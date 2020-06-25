@@ -167,7 +167,7 @@ class Traffic_Light( TrafficModel):
         """        
         r = requests.get('http://127.0.0.1:8000/currentimages/1/',headers= {'Content-type': 'application/json'})
         r = r.json()
-        self.img_link = 'http://127.0.0.1:8000/' + str(r['img' + str(self.id)]) + '.jpg'
+        self.img_link = str(r['img' + str(self.id)]) 
    
         return 'image updated'
 

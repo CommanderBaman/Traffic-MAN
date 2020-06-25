@@ -4,7 +4,7 @@ from django.shortcuts import render
 from myapp.models import *
 from .serializers import *
 from django.db.models import Q
-from rest_framework import viewsets
+from rest_framework import viewsets,mixins,generics
 from rest_framework.response import Response
 from django.shortcuts import render,redirect
 from rest_framework.views import APIView
@@ -46,7 +46,7 @@ def startedProgram(request):
 def endProgram(request):
     
      currentimage=CurrentImages.objects.get(pk=1)
-     requests.put('http://127.0.0.1:8000/current/1',data={'programStarted': False})
+     requests.patch('http://127.0.0.1:8000/current/1',data={'programStarted': False})
      
      return redirect('http://127.0.0.1:8000/home')
 
@@ -63,35 +63,40 @@ def my_view(request):
       return render(request,'index.html',context)
 
 
-class getCurrentImage(APIView):
+class getCurrentImage(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView):
      
     permission_classes = ()
     authentication_classes = () 
+    queryset = CurrentImages.objects.all()
+    serializer_class = CurrentImagesSerializer
 
-    def get(self, request, pk, format=None):
-        currentimage = CurrentImages.objects.get(pk=pk)
-        serializer = CurrentImagesSerializer(currentimage)
-        return Response(serializer.data)    
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)     
     
-    def put(self, request, pk, format=None):
-        currentimage = CurrentImages.objects.get(pk=pk)
+    # def put(self, request, pk, format=None):
+    #     currentimage = CurrentImages.objects.get(pk=pk)
         
-        if currentimage is not None:
-            serializer = CurrentImagesSerializer(currentimage, data=request.data)
+    #     if currentimage is not None:
+    #         serializer = CurrentImagesSerializer(currentimage, data=request.data)
             
-            if serializer.is_valid():
-                serializer.save()
+    #         if serializer.is_valid():
+    #             serializer.save()
                 
-                return Response(serializer.data)
-        else:  
-            serializer = CurrentImagesSerializer(data=request.data)
+    #             return Response(serializer.data)
+    #     else:  
+    #         serializer = CurrentImagesSerializer(data=request.data)
             
-            if serializer.is_valid():
-                serializer.save()
+    #         if serializer.is_valid():
+    #             serializer.save()
                 
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            else:
-                print(serializer.errors)    
+    #             return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #         else:
+    #             print(serializer.errors)    
 
 class getTrafficLight(APIView):
      

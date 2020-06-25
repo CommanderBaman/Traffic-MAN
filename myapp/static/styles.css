@@ -2,10 +2,6 @@
       box-sizing: border-box;
 }
 
-h1 {
-      color: red;
-}
-
 .contain {
       position: relative;
 }
@@ -17,21 +13,21 @@ h1 {
 
 .green {
       position: absolute;
-
-      z-index: 70;
-      background-color: lightgreen;
+      
+      z-index: 40;
+      background-color:#00FF00;
       width: 37.5vw;
       height: 37.5vh;
-      background-image: linear-gradient(-90deg, cyan, blue);
+      /* background-image: linear-gradient(-90deg, cyan, green); */
       
 }
 
 .horizontal {
       position: absolute;
-      height: 30vh;
-      top: 37.5vh;
+      height: 40vh;
+      top: 30vh;
       background-color: grey;
-      width: 99vw;
+      width: 100vw;
       z-index: 50;
 }
 
@@ -41,33 +37,35 @@ h1 {
       top: 0;
       left: 37.5vw;
       background-color: grey;
-      width: 25vw;
+      width: 30vw;
       z-index: 50;
       
 }
 .center {
       
       position: absolute;
-      background-color: grey;
-      top: 37.5vh;
+      background-color: darkgray;
+      top: 30vh;
       left: 37.5vw;
-      height: 30vh;
-      width: 25vw;
+      height: 40vh;
+      width: 30vw;
       z-index: 53;
 
 }
 hr.stripesh {
+      
       position: absolute;
       border-top: 5px dashed white;
-      left:14.5vw;
-      top: 50vh;
-      width: 70vw;
+      /* left:14.5vw; */
+      top: 48vh;
+      width: 100vw;
       z-index: 51;
 }
 vl.stripesv{
       position: absolute;
       border-left: 5px dashed white;
-      left: 50vw;
+      left: 52.5vw;
+      /* top: 21.3vh; */
       height: 100vh;
       z-index: 51;
 }
@@ -86,21 +84,22 @@ vl.stripesv{
 .signal0  {
       border-radius: 5px;
       left: -2vw;
+      
       position: absolute;
       background-color: white;
       width: 2vw;
-      height: 14.6vh;
+      height: 19.5vh;
       padding: 0;
       margin: 0;
 }
 
 .signal1{
       border-radius: 5px;
-      top: -4vh;
-      left: 13vw;
+      top: 0;
+      right: 0;
       position: absolute;
       background-color: white;
-      width: 12vw;
+      width: 15vw;
       height: 4vh;
 
 }
@@ -108,23 +107,100 @@ vl.stripesv{
 .signal2{
       border-radius: 5px;
       right: -2vw;
-      top: 15.5vh;
+      top: 20.5vh;
       position: absolute;
       background-color:  white;
       width: 2vw;
-      height: 14.5vh; 
+      height: 19.5vh; 
          
 }
 
 .signal3{
       border-radius:5px;
-      bottom: -4vh;
+      bottom: 0;
+      left: 0;
       position: absolute;
       background-color: white;
-      width: 12.5vw;
+      width: 15vw;
       height: 4vh;
 }
 
 a:hover {
       text-decoration: none;
 }
+
+
+#start {
+      margin-left: 9vw;
+      margin-top: 19vh;
+      margin-right: 1vw;
+}
+
+#shuffle {
+      margin-top: 19vh;
+      margin-right: 1vw;
+}
+
+#end {
+      margin-top: 19vh;
+}
+
+#img0 {
+      margin-left: 5px;
+      width: 200px;
+      height: 150px;
+      position: absolute;
+      left: 0;
+}
+
+#img1 {
+      margin-top: 5px;
+      right: 0;
+      width: 200px;
+      height: 150px;
+      position: absolute;
+      top: 0;
+}
+
+#img2 {
+      margin-right: 5px;
+      width: 200px;
+      height: 150px;
+      position: absolute;
+      right: 0;
+      bottom: 0;
+}
+
+#img3 {
+      margin-bottom: 5px;
+      left: 0;
+      width: 200px;
+      height: 150px;
+      position: absolute;
+      bottom: 0;
+}
+
+#emg0 {
+      position: absolute;
+      left: 250px;
+      top: 20px;
+}
+
+#emg1 {
+      position: absolute;
+      right: 20px;
+      top: 180px;
+}
+
+#emg2 {
+      position: absolute;
+      right: 250px;
+      bottom: 20px;
+}
+
+#emg3 {
+      position: absolute;
+      left: 20px;
+      bottom: 160px;
+}
+
