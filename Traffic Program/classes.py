@@ -49,6 +49,7 @@ class Traffic_Light( TrafficModel):
         self.color = color 
         self.inactive = inactive
         self.img_link = img_link
+        self.was_emergency = False
         requests.patch('http://127.0.0.1:8000/trafficlights/'+str( self.id + 1) + '/',data={'color':self.color})
 
     def __str__( self):
@@ -132,18 +133,21 @@ class Traffic_Light( TrafficModel):
             print( 'Bad Light {} time: {}  color: {}'.format( self.id, self.time_val, self.color))
             return 'Bad Light'
         
-        # making it inactive first
+        # making it inactive first and out of emergency condition 
         self.inactive = True
+        self.was_emergency = False
 
         # changing color to green 
         print( 'changing color of light {} to green for {} seconds'.format( self.id, self.green_time))
         self.change_color( 'green')
-        self.wait( self.green_time)
-        
-        # checking for emergency in system
-        for tl in intersection:
-            if tl.emergency:
-                return 'emergency condition is there'
+        gt = self.green_time
+
+        # checking for emergency after every 0.5 second
+        while( gt > 0):
+            sleep( 0.5)
+            gt -= 0.5
+            if self.was_emergency:
+                return 'Emergency condition is there'
 
         # changing color to yellow
         print( 'changing color of light {} to yellow for {} seconds'.format( self.id, self.yellow_time))
@@ -151,9 +155,8 @@ class Traffic_Light( TrafficModel):
         self.wait( self.yellow_time)
 
         # checking for emergency
-        for tl in intersection:
-            if tl.emergency:
-                return 'emergency condition is there'
+        if self.was_emergency:
+            return 'Emergency condition is there'
 
         #changing color to red
         print( 'changing color of light {} to red'.format( self.id))
