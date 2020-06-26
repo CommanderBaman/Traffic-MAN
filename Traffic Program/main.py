@@ -111,9 +111,13 @@ while( 1):
 
 
 #________________________________________________________________________________________
-    # in emergency conditions this runs
+    # in emergency conditions this thing runs
     if DEBUG:
         print( 'emergency condition applied')
+    
+    # changing current green traffic light to yellow for 2 seconds
+    chosen_traffic_light.change_color( 'yellow', from_emergency= True)
+    sleep( 2)
 
     #changing all colors to red
     print( '\n\nchanging all colors to red')
@@ -130,6 +134,9 @@ while( 1):
     # choosing the light that has emergency
     emer_traffic_light = intersection[emer_id]   
 
+    # giving input to the chosen light to stop its process
+    chosen_traffic_light.was_emergency = True
+
     print( 'changing light {} to green-emergency'.format( emer_id))
     emer_traffic_light.change_color( 'green', emergency_loop)
 
@@ -140,8 +147,6 @@ while( 1):
         sleep( 1)
         emer_timer += 1
         emergency_loop = emer_traffic_light.emergency 
-        # if emer_timer >= 10:
-        #     break
 
     ip_thread = threading.Thread( target= time_updater, args=[intersection])
     ip_thread.start()
