@@ -30,7 +30,7 @@ router.register(r'currentimages', views.CurrentImagesViewSet)
 router.register(r'trafficlights', views.TrafficLightViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin', admin.site.urls),
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('home',views.my_view),

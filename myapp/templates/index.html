@@ -141,10 +141,10 @@
       }
 
       function shuffleImage() {
-            img0 = getRandom(1, 15).toString()
-            img1 = getRandom(1, 15).toString()
-            img2 = getRandom(1, 15).toString()
-            img3 = getRandom(1, 15).toString()
+            img0 = getRandom(1, 40).toString()
+            img1 = getRandom(1, 40).toString()
+            img2 = getRandom(1, 40).toString()
+            img3 = getRandom(1, 40).toString()
             var src0, src1, src2, src3
             $.get('http://127.0.0.1:8000/images/' + img0 + '/', function (data) {
                   src0 = data['picture'];
